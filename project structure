@@ -1,0 +1,28 @@
+📁 Project Structure
+dccbba-sumo-simulation/
+├── config.yaml                    # Main configuration file
+├── requirements.txt               # Python dependencies
+├── main.py                        # Main simulation entry point
+├── run_simulation.py              # CLI interface
+├── README.md                      # This file
+├── sumo_configs/                  # SUMO configuration files
+│   ├── network.net.xml           # Road network definition
+│   ├── simulation.sumocfg        # SUMO simulation config
+│   └── viewsettings.xml          # GUI visualization settings
+├── src/                          # Source code
+│   ├── agents/                   # Agent implementations
+│   │   ├── vehicle_agent.py      # Vehicle agent class
+│   │   └── mesh_simulator.py     # Mesh network simulator
+│   ├── simulation/               # Simulation core
+│   │   ├── sumo_interface.py     # SUMO integration layer
+│   │   └── visualization.py      # Visualization utilities
+│   ├── routing/                  # Routing algorithms
+│   │   └── dccbba.py            # DCCBBA implementation
+│   └── utils/                    # Utility modules
+│       ├── config.py            # Configuration management
+│       ├── logger.py            # Logging system
+│       └── metrics.py           # Performance metrics
+├── tests/                        # Unit and integration tests
+├── docs/                         # Documentation
+├── reports/                      # Generated reports and metrics
+└── visualizations/               # Generated plots and charts

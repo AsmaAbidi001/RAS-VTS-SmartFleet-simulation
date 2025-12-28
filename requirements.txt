@@ -1,0 +1,13 @@
+# Core dependencies
+numpy>=1.21.0
+matplotlib>=3.5.0
+pyyaml>=6.0
+click>=8.0.0
+pandas>=1.4.0
+
+# Optional GUI dependencies
+tkinter  # Usually comes with Python
+
+# Testing
+pytest>=7.0.0
+pytest-cov>=3.0.0

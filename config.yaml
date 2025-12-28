@@ -1,0 +1,54 @@
+simulation:
+  step_length: 1
+  duration: null
+  random_seed: 42
+  use_gui: true
+  gui_delay: 50
+
+sumo:
+  binary: "sumo-gui"
+  config: "sumo_configs/simulation.sumocfg"
+  net_file: "sumo_configs/network.net.xml"
+  gui_settings: "sumo_configs/viewsettings.xml"
+
+network:
+  warehouse_edge: "edge_warehouse"
+  communication_range: 600.0
+  stall_speed_threshold: 0.2
+  stall_ticks_threshold: 10
+
+vehicles:
+  num_vehicles: 3
+  default_capacity: 10.0
+  default_battery: 100.0
+  follow_agent_id: "vehicle_B"
+  colors:
+    - [0, 0, 255, 255]      # Blue
+    - [255, 0, 0, 255]      # Red
+    - [0, 255, 0, 255]      # Green
+    - [180, 0, 255, 255]    # Purple
+    - [255, 200, 0, 255]    # Yellow
+    - [0, 230, 230, 255]    # Cyan
+
+tasks:
+  generate_random: true
+  sod_tasks: 5
+  mid_tasks: 20
+  sod_deadline_range: [1800, 2000]
+  mid_deadline_offset_range: [4000, 4200]
+  priority_multipliers:
+    high: 0.5
+    normal: 1.0
+    low: 1.5
+
+visualization:
+  warehouse_box_half: 12.0
+  task_circle_radius: 8.0
+  route_marker_size: 3.0
+  follow_route_layer: 99
+  other_route_layer: 40
+
+logging:
+  log_file: "simulation_log.json"
+  status_interval: 100
+  battery_drain_per_status: 0.1

@@ -1,0 +1,100 @@
+"""
+Command Line Interface for DCCBBA-SUMO Simulation
+"""
+
+import click
+import sys
+import os
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'src'))
+
+from src.utils.config import load_config, save_config
+from src.utils.logger import setup_logging
+import yaml
+import logging
+
+logger = logging.getLogger(__name__)
+
+@click.group()
+def cli():
+    """DCCBBA-SUMO Simulation CLI"""
+    pass
+
+@cli.command()
+@click.option('--num-vehicles', default=3, help='Number of vehicles')
+@click.option('--duration', type=int, help='Simulation duration in ticks')
+@click.option('--gui/--no-gui', default=True, help='Enable/disable GUI')
+@click.option('--config', default='config.yaml', help='Configuration file')
+def run(num_vehicles, duration, gui, config):
+    """Run the simulation"""
+    from main import run_simulation
+    
+    # Update configuration
+    cfg = load_config(config)
+    cfg['simulation']['use_gui'] = gui
+    cfg['vehicles']['num_vehicles'] = num_vehicles
+    if duration:
+        cfg['simulation']['duration'] = duration
+    
+    # Save temporary config
+    temp_config = 'temp_config.yaml'
+    save_config(temp_config, cfg)
+    
+    try:
+        run_simulation(temp_config)
+    finally:
+        if os.path.exists(temp_config):
+            os.remove(temp_config)
+
+@cli.command()
+@click.argument('config_file', default='config.yaml')
+def validate(config_file):
+    """Validate configuration file"""
+    try:
+        cfg = load_config(config_file)
+        click.echo(f"✓ Configuration file {config_file} is valid")
+        click.echo(f"  Vehicles: {cfg['vehicles']['num_vehicles']}")
+        click.echo(f"  GUI: {'Enabled' if cfg['simulation']['use_gui'] else 'Disabled'}")
+        click.echo(f"  Duration: {cfg['simulation']['duration'] or 'Unlimited'}")
+    except Exception as e:
+        click.echo(f"✗ Configuration error: {e}", err=True)
+        sys.exit(1)
+
+@cli.command()
+@click.option('--output', default='new_config.yaml', help='Output config file')
+def init(output):
+    """Initialize a new configuration file"""
+    from src.utils.config import DEFAULT_CONFIG
+    
+    save_config(output, DEFAULT_CONFIG)
+    click.echo(f"Created new configuration file: {output}")
+
+@cli.command()
+@click.option('--config', default='config.yaml', help='Configuration file')
+def stats(config):
+    """Show simulation statistics from previous run"""
+    import json
+    import os
+    
+    cfg = load_config(config)
+    log_file = cfg['logging']['log_file']
+    
+    if os.path.exists(log_file):
+        with open(log_file, 'r') as f:
+            logs = json.load(f)
+        
+        # Count events by type
+        event_counts = {}
+        for log in logs:
+            event_type = log.get('type', 'unknown')
+            event_counts[event_type] = event_counts.get(event_type, 0) + 1
+        
+        click.echo(f"Simulation Statistics:")
+        click.echo(f"  Total events: {len(logs)}")
+        for event_type, count in event_counts.items():
+            click.echo(f"  {event_type}: {count}")
+    else:
+        click.echo("No simulation log found")
+
+if __name__ == "__main__":
+    cli()
